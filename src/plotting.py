@@ -57,11 +57,11 @@ def plot_points(points: NDArray, convex_hull: NDArray = None, **kwargs) -> None:
     plt.show()
 
 
-def plot_bucket(points: NDArray, lower_hull: NDArray = None, **kwargs) -> None:
+def plot_bucket(points: NDArray, bucket_hull: NDArray = None, **kwargs) -> None:
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(points[:, 0], points[:, 1], "o", **kwargs)
-    if lower_hull is not None:
-        ax.plot(lower_hull[:, 0], lower_hull[:, 1], "-", linewidth=4, zorder=-10)
+    if bucket_hull is not None:
+        ax.plot(bucket_hull[:, 0], bucket_hull[:, 1], "-", linewidth=4, zorder=-10)
     ax.grid()
     fig.tight_layout()
     plt.show()

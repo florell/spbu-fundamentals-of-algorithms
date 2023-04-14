@@ -2,7 +2,7 @@ from time import perf_counter
 
 import numpy as np
 from numpy.typing import NDArray
-from src.plotting import plot_bucket
+from src.plotting import plot_bucket, plot_points
 
 
 def convex_bucket(points: NDArray) -> NDArray:
@@ -34,5 +34,5 @@ if __name__ == "__main__":
         ch = convex_bucket(points)
         t_end = perf_counter()
         print(f"Elapsed time: {t_end - t_start} sec")
-        plot_bucket(points, convex_hull=ch, markersize=20)
+        plot_bucket(points, bucket_hull=ch, markersize=20)
         print()

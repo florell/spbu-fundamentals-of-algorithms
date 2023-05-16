@@ -4,17 +4,45 @@ import matplotlib.pyplot as plt
 
 
 def qubic_spline_coeff(x_nodes: NDArray, y_nodes: NDArray) -> NDArray:
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-    pass
+    n = len(x_nodes)
+    h = np.diff(x_nodes)
+    y_diff = np.diff(y_nodes)
+    alpha = np.zeros(n)
+    for i in range(1, n - 1):
+        alpha[i] = (3 / h[i]) * (y_diff[i] / h[i] - y_diff[i - 1] / h[i - 1])
+    l = np.zeros(n)
+    mu = np.zeros(n)
+    z = np.zeros(n)
+    l[0] = 1
+    mu[0] = 0
+    z[0] = 0
+    for i in range(1, n - 1):
+        l[i] = 2 * (x_nodes[i + 1] - x_nodes[i - 1]) - h[i - 1] * mu[i - 1]
+        mu[i] = h[i] / l[i]
+        z[i] = (alpha[i] - h[i - 1] * z[i - 1]) / l[i]
+    l[n - 1] = 1
+    z[n - 1] = 0
+    c = np.zeros(n)
+    b = np.zeros(n)
+    d = np.zeros(n)
+    for j in range(n - 2, -1, -1):
+        c[j] = z[j] - mu[j] * c[j + 1]
+        b[j] = (y_diff[j] / h[j]) - h[j] * (c[j + 1] + 2 * c[j]) / 3
+        d[j] = (c[j + 1] - c[j]) / (3 * h[j])
+    coeff = np.zeros((n - 1, 4))
+    for k in range(n - 1):
+        coeff[k] = np.array([y_nodes[k], b[k], c[k], d[k]])
+    return coeff
 
 
 def qubic_spline(x: float, x_nodes: NDArray, qs_coeff: NDArray) -> float:
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-    pass
+    n = len(x_nodes)
+    for i in range(n - 1):
+        if x_nodes[i] <= x <= x_nodes[i + 1]:
+            h = x_nodes[i + 1] - x_nodes[i]
+            t = (x - x_nodes[i]) / h
+            a, b, c, d = qs_coeff[i]
+            return a + b * t + c * t**2 + d * t**3
 
 
 if __name__ == "__main__":
@@ -54,10 +82,10 @@ if __name__ == "__main__":
     )
     years = np.arange(1989.0, 2017.0)
     x = np.linspace(years[0], years[-1], 500)
-    coeff = qubic_spline_coeff(years, gdp)
+    coeffs = qubic_spline_coeff(years, gdp)
     spline_vectorized = np.vectorize(qubic_spline, excluded=set((1, 2)))
     fig, ax = plt.subplots(1, 1, figsize=(12, 6))
     ax.plot(years, gdp, "x", markersize=10)
-    ax.plot(x, spline_vectorized(x, years, coeff))
+    ax.plot(x, spline_vectorized(x, years, coeffs))
     ax.grid()
     plt.show()

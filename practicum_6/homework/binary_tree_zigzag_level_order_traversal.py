@@ -20,23 +20,60 @@ class BinaryTree:
     def empty(self) -> bool:
         return self.root is None
 
-    def zigzag_level_order_traversal(self) -> list[Any]:
+    def zigzag_level_order_traversal(self) -> list[list[Any]]:
+        result = []
+        if self.empty():
+            return result
 
-        ##########################
-        ### PUT YOUR CODE HERE ###
-        ##########################
+        current_level = [self.root]
+        zigzag = False
 
-        pass
+        while current_level:
+            current_vals = []
+            next_level = []
+
+            for node in current_level:
+                current_vals.append(node.key)
+
+                if node.left:
+                    next_level.append(node.left)
+                if node.right:
+                    next_level.append(node.right)
+
+            if zigzag:
+                current_vals.reverse()
+
+            result.append(current_vals)
+            current_level = next_level
+            zigzag = not zigzag
+
+        return result
 
 
 def build_tree(list_view: list[Any]) -> BinaryTree:
     bt = BinaryTree()
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    if not list_view:
+        return bt
 
-    pass
+    nodes = []
+    for val in list_view:
+        if val is None:
+            nodes.append(None)
+        else:
+            nodes.append(Node(val))
+
+    for i, node in enumerate(nodes):
+        if node:
+            left_child = 2 * i + 1
+            right_child = 2 * i + 2
+            if left_child < len(nodes):
+                node.left = nodes[left_child]
+            if right_child < len(nodes):
+                node.right = nodes[right_child]
+
+    bt.root = nodes[0]
+    return bt
 
 
 if __name__ == "__main__":
@@ -47,7 +84,7 @@ if __name__ == "__main__":
     # Avoid recursive traversal!
 
     with open(
-        "practicum_6/homework/binary_tree_zigzag_level_order_traversal_cases.yaml", "r"
+        "binary_tree_zigzag_level_order_traversal_cases.yaml", "r"
     ) as f:
         cases = yaml.safe_load(f)
 

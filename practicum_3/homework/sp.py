@@ -1,16 +1,35 @@
 from typing import Any
-
 import networkx as nx
+from heapq import heappush, heappop
+from collections import defaultdict
 
 from src.plotting import plot_graph
 
 
 def dijkstra_sp(G: nx.Graph, source_node="0") -> dict[Any, list[Any]]:
-    shortest_paths = {}  # key = destination node, value = list of intermediate nodes
+    shortest_paths = defaultdict(list)  # ключ = узел назначения, значение = список промежуточных узлов
+    distances = {vertex: float("inf") for vertex in G}
+    distances[source_node] = 0
+    heap = [(0, source_node)]
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    # Алгоритм Дейкстры на основе двоичной кучи
+    while heap:
+        current_distance, current_vertex = heappop(heap)
+
+        if current_distance > distances[current_vertex]:
+            continue
+
+        # Обход соседей текущего узла для поиска минимального расстояния
+        for neighbor, weight in G[current_vertex].items():
+            new_distance = current_distance + weight["weight"]
+            if new_distance < distances[neighbor]:
+                distances[neighbor] = new_distance
+                shortest_paths[neighbor] = shortest_paths[current_vertex] + [current_vertex]
+                heappush(heap, (new_distance, neighbor))
+
+    # Построение кратчайшего пути между двумя узлами
+    for vertex in G:
+        shortest_paths[vertex].append(vertex)
 
     return shortest_paths
 

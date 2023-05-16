@@ -7,9 +7,13 @@ import numpy as np
 def time_taken(tickets: list[int], k: int) -> int:
     seconds_elapsed = 0
 
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    for i in range(len(tickets)):
+         if tickets[i] >= tickets[k]:
+             seconds_elapsed += tickets[k] - 1
+             if i <= k:
+                 seconds_elapsed += 1
+         else:
+             seconds_elapsed += tickets[i]
 
     return seconds_elapsed
 

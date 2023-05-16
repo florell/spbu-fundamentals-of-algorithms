@@ -1,5 +1,5 @@
 from time import perf_counter
-
+import networkx as nx
 
 class Maze:
     def __init__(self, list_view: list[list[str]]) -> None:
@@ -36,12 +36,57 @@ class Maze:
             print()  # linebreak
 
 
+def plot_graph(G):
+    options = dict(
+        font_size=12,
+        node_size=500,
+        node_color='white',
+        edgecolors="black",
+    )
+    pos = nx.spring_layout(G)
+    nx.draw_networkx(G, pos, **options)
+    if nx.is_weighted(G):
+        labels = {e: G.edges[e]['weight'] for e in G.edges}
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+
+
 def solve(maze: Maze) -> None:
     path = ""  # solution as a string made of "L", "R", "U", "D"
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
+    m = open('maze_2.txt').readlines()
+    start = None
+    end = None
+    for j in range(len(m[0])):
+        if m[0][j] == 'O':
+            start = (0, j, '')
+            break
+    for j in range(len(m[-1])):
+        if m[-1][j] == 'X':
+            end = (len(m) - 1, j)
+    queue = [start]
+    checked = []
+    while len(queue) != 0:
+        t = queue.pop()
+        if m[t[0]][t[1] - 1] != '#':
+            if m[t[0]][t[1] - 1] == 'X':
+                path = t[2]
+            else:
+                if (t[0], t[1] - 1) not in checked:
+                    queue.append((t[0], t[1] - 1, t[2] + 'L'))
+                    checked.append((t[0], t[1] - 1))
+        if m[t[0] + 1][t[1]] != '#':
+            if m[t[0] + 1][t[1]] == 'X':
+                path = t[2]
+            else:
+                if (t[0] + 1, t[1]) not in checked:
+                    queue.append((t[0] + 1, t[1], t[2] + 'D'))
+                    checked.append((t[0] + 1, t[1]))
+        if m[t[0]][t[1] + 1] != '#':
+            if m[t[0]][t[1] + 1] == 'X':
+                path = t[2]
+            else:
+                if (t[0], t[1] + 1) not in checked:
+                    queue.append((t[0], t[1] + 1, t[2] + 'R'))
+                    checked.append((t[0], t[1] + 1))
 
     print(f"Found: {path}")
     maze.print(path)
@@ -60,7 +105,7 @@ def _shift_coordinate(i: int, j: int, move: str) -> tuple[int, int]:
 
 
 if __name__ == "__main__":
-    maze = Maze.from_file("practicum_2/homework/maze_2.txt")
+    maze = Maze.from_file("maze_2.txt")
     t_start = perf_counter()
     solve(maze)
     t_end = perf_counter()

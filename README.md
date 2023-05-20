@@ -72,3 +72,8 @@ Homework:
 ## Practicum 10
 
 Cubic spline: http://getsomemath.ru/subtopic/computational_mathematics/approximation_theory/local_interpolation
+
+LU: http://getsomemath.ru/subtopic/computational_mathematics/numerical_linear_algebra/gauss_methods
+
+Homework:
+1. `lu.py`: implement the LU decomposition with and without pivoting and study how both implementations work for a gradually more ill-conditioned matrix.
